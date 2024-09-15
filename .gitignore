@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio
+x64/
+FileContentIndex/
+*.user
+*.ipch
+*.VC*
+*.suo

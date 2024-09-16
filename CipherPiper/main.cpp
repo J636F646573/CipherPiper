@@ -11,7 +11,7 @@ int main()
     Cipher::CClassifier classifier;
     Cipher::CipherType type = classifier.ClassifyCipher(input);
 
-    std::cout << static_cast<uint8_t>(type) << "\n";
+    std::cout << std::to_string(static_cast<int>(type)) << "\n";
 
     return 0;
 }

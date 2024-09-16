@@ -8,6 +8,8 @@ namespace Cipher
 
     CipherType CClassifier::ClassifyCipher(std::string& cipherText)
     {
+        CipherType type = CipherType::substitution;
+
         for (char& it : cipherText)
         {
             if (std::find(_testedChars.begin(),
@@ -21,7 +23,14 @@ namespace Cipher
             }
         }
 
-        return CipherType::caesar;
+        double error = FindFrequencyError(_frequencyMap);
+        double ic = IndexOfCoincidence(_frequencyMap);
+        if (ic <= 0.05) type = CipherType::vigenere;
+
+        if (error <= 0.05) type = CipherType::caesar;
+        //else type = CipherType::substitution;
+
+        return type;
     }
 
     double CClassifier::FindFrequency(const char& character, std::string& cipherText)
@@ -45,7 +54,7 @@ namespace Cipher
         return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z');
     }
 
-    double CClassifier::FindFrequencyError(std::map<char, double> textFrequency)
+    double CClassifier::FindFrequencyError(std::map<char, double>& textFrequency)
     {
         std::vector<double> frequencies;
         std::vector<double> errors;
@@ -79,6 +88,7 @@ namespace Cipher
             {'q', 0.00095},
             {'z', 0.00074},
         };
+
         static const std::vector expectedDoubles =
         {
         	0.127,
@@ -117,7 +127,7 @@ namespace Cipher
         std::sort(frequencies.begin(), frequencies.end());
 
         errors.reserve(26);
-        for (int i = 0; i < 26; i++)
+        for (int i = 0; i < 26 && i < frequencies.size(); i++)
         {
             errors.push_back(abs(expectedDoubles[i] - frequencies[i]));
         }
@@ -131,6 +141,28 @@ namespace Cipher
         final = final / 26.0;
 
         return final;
+    }
+
+    double CClassifier::IndexOfCoincidence(std::map<char, double>& textFrequency)
+    {
+        /*
+         *      SUM{Fi(Fi-1)
+         * IC = ------------
+         *       N(N-1)/26
+         */
+        double numerator = 0.0;
+        double denominator = 0.0;
+        int count = 0;
+
+	    for (auto freq : textFrequency | std::views::values)
+	    {
+            numerator += ( freq * ( freq - 1 ));
+            count++;
+	    }
+
+        double indexOfCoincidence = numerator / (count * (count - 1.0) / 26.0);
+
+        return indexOfCoincidence;
     }
 
 }

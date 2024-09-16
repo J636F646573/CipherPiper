@@ -23,7 +23,8 @@ namespace Cipher
     private:
         static double FindFrequency(const char& character, std::string& cipherText);
         static bool IsLetter(const char& character);
-        static double FindFrequencyError(std::map<char, double> textFrequency);
+        static double FindFrequencyError(std::map<char, double>& textFrequency);
+        static double IndexOfCoincidence(std::map<char, double>& textFrequency);
 
         std::vector<char> _testedChars;
         std::map<char, double> _frequencyMap;

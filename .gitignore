@@ -36,5 +36,7 @@ x64/
 FileContentIndex/
 *.user
 *.ipch
-*.VC*
 *.suo
+*.db
+*.db-*
+*.opendb
